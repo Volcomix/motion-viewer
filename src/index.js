@@ -4,12 +4,12 @@ import './index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 
-window.renderMotionViewer = testValue => {
+window.renderMotionViewer = pages => {
   ReactDOM.render(
-    <App testValue={testValue} />,
+    <App pages={pages} />,
     document.getElementById('root'),
   )
 }
 
-window.renderMotionViewer('Sloubi')
+window.renderMotionViewer([])
 registerServiceWorker()
