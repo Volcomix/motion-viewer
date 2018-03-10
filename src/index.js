@@ -5,11 +5,8 @@ import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 
 window.renderMotionViewer = pages => {
-  ReactDOM.render(
-    <App pages={pages} />,
-    document.getElementById('root'),
-  )
+  ReactDOM.render(<App pages={pages} />, document.getElementById('root'))
 }
 
-window.renderMotionViewer([])
+window.renderMotionViewer({})
 registerServiceWorker()

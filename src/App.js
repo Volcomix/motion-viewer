@@ -2,23 +2,40 @@ import React from 'react'
 import './App.css'
 
 class App extends React.Component {
-  state = { selectedPage: 0, selectedVideo: undefined }
+  state = { selectedPageId: undefined, selectedVideo: undefined }
+
+  componentWillReceiveProps(nextProps) {
+    if (Object.keys(nextProps.pages).length === 0) {
+      return
+    }
+    let { selectedPageId, selectedVideo } = this.state
+    let page = nextProps.pages[selectedPageId]
+    if (!page) {
+      ;[selectedPageId, page] = Object.entries(nextProps.pages)[0]
+      selectedVideo = undefined
+    }
+    if (!page.videos.includes(selectedVideo)) {
+      selectedVideo = page.videos[0]
+      this.setState({ selectedPageId, selectedVideo })
+      window.selectVideo({ page, video: selectedVideo })
+    }
+  }
 
   render() {
     const { pages } = this.props
-    const { selectedPage, selectedVideo } = this.state
+    const { selectedPageId, selectedVideo } = this.state
     return (
       <div className="App">
-        <select value={selectedPage} onChange={this.handlePageChange}>
-          {pages.map((page, index) => (
-            <option key={`${page.title}-${page.url}`} value={index}>
-              {page.title} - {page.url}
+        <select value={selectedPageId} onChange={this.handlePageChange}>
+          {Object.values(pages).map(({ id, title, url }) => (
+            <option key={id} value={id}>
+              {title} - {url}
             </option>
           ))}
         </select>
         <select value={selectedVideo} onChange={this.handleVideoChange}>
-          {pages[selectedPage] &&
-            pages[selectedPage].videos.map(video => (
+          {pages[selectedPageId] &&
+            pages[selectedPageId].videos.map(video => (
               <option key={video} value={video}>
                 {video}
               </option>
@@ -29,11 +46,18 @@ class App extends React.Component {
   }
 
   handlePageChange = event => {
-    this.setState({ selectedPage: event.target.value })
+    const selectedPageId = event.target.value
+    const page = this.props.pages[selectedPageId]
+    const selectedVideo = page.videos[0]
+    this.setState({ selectedPageId, selectedVideo })
+    window.selectVideo({ page, video: selectedVideo })
   }
 
   handleVideoChange = event => {
-    this.setState({ selectedVideo: event.target.value })
+    const page = this.props.pages[this.state.selectedPageId]
+    const selectedVideo = event.target.value
+    this.setState({ selectedVideo })
+    window.selectVideo({ page, video: selectedVideo })
   }
 }
 
